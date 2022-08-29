@@ -42,7 +42,6 @@ echo Please choose your hostname
 read hostname && echo $hostname >> /mnt/etc/hostname
 
 echo Entering chroot...
-read
 echo Set root password
 chroot /mnt passwd
 
@@ -50,16 +49,14 @@ echo Choose your username
 read username
 
 echo Generating fstab
-cat << GEN | chroot /mnt
 id_root=$(blkid -s UUID -o value /dev/$rootpartition)
 id_swap=$(blkid -s UUID -o value /dev/$swappartition)
-cat << STAB >> /etc/fstab
+cat << STAB >> /mnt/etc/fstab
 UUID=$id_swap none swap sw 0 0
 UUID=$id_root / btrfs subvol=/@, defaults 0 1
 UUID=$id_root /home btrfs subvol=/@home, defaults 0 1
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
-GEN
 
  
 
