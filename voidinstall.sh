@@ -53,13 +53,13 @@ id_root=$(blkid -s UUID -o value /dev/$rootpartition)
 id_swap=$(blkid -s UUID -o value /dev/$swappartition)
 cat << STAB > /mnt/etc/fstab
 UUID=$id_swap none swap sw 0 0
-UUID=$id_root / btrfs subvol=/@, defaults 0 1
-UUID=$id_root /home btrfs subvol=/@home, defaults 0 1
+UUID=$id_root / btrfs compress=zstd,subvol=/@, defaults 0 1
+UUID=$id_root /home btrfs compress=zstd,subvol=/@home, defaults 0 1
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
 echo Installing GRUB
-chroot /mnt xbps-install -S grub
+chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
 chroot /mnt grub-install /dev/$diskname
 
  
