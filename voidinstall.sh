@@ -23,9 +23,9 @@ btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
 
-mount -o compress=zstd,subvol=@ /mnt
+mount -o subvol=@ /mnt
 mkdir /mnt/home
-mount -o compress=zstd,subvol=@home /mnt/home
+mount -o subvol=@home /mnt/home
 
 REPO=https://repo-fi.voidlinux.org/current
 ARCH=x86_64
@@ -59,7 +59,7 @@ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
 STAB
 
 echo Installing GRUB
-chroot /mnt xbps-install grub
+chroot /mnt xbps-install -S grub
 chroot /mnt grub-install /dev/$diskname
 
  
