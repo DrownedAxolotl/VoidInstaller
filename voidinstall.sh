@@ -58,5 +58,9 @@ UUID=$id_root /home btrfs subvol=/@home, defaults 0 1
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
+echo Installing GRUB
+chroot /mnt xbps-install grub
+chroot /mnt grub-install /dev/$diskname
+
  
 
