@@ -10,10 +10,13 @@ fdisk /dev/$diskname
 lsblk
 echo "Please enter the name of your root partition"
 read rootpartition
+echo Enter your boot partition
+read bootpartition
 echo Enter your swap name
 read swappartition
 
 mkfs.btrfs -L root /dev/$rootpartition
+mkfs.ext4 -L boot /dev/$bootpartition
 mkswap /dev/$swappartition
 
 swapon /dev/$swappartition
@@ -26,6 +29,8 @@ umount /mnt
 mount -o compress=zstd,subvol=@ /mnt
 mkdir /mnt/home
 mount -o compress=zstd,subvol=@home /mnt/home
+mkdir /mnt/boot
+mount /dev/$bootpartition /mnt/boot
 
 REPO=https://repo-fi.voidlinux.org/current
 ARCH=x86_64
@@ -37,6 +42,7 @@ mount --rbind /proc /mnt/proc; mount --make-rslave /mnt/proc
 mount --rbind /sys /mnt/sys; mount --make-rslave /mnt/sys
 mount --rbind /run /mnt/run; mount --make-rslave /mnt/run
 cp /etc/resolv.conf /mnt/etc
+
 
 echo Please choose your hostname
 read hostname && echo $hostname > /mnt/etc/hostname
@@ -51,10 +57,12 @@ read username
 echo Generating fstab
 id_root=$(blkid -s UUID -o value /dev/$rootpartition)
 id_swap=$(blkid -s UUID -o value /dev/$swappartition)
+id_boot=$(blkid -s UUID -o value /dev/$bootpartition)
 cat << STAB > /mnt/etc/fstab
 UUID=$id_swap none swap sw 0 0
 UUID=$id_root / btrfs compress=zstd,subvol=/@, defaults 0 1
 UUID=$id_root /home btrfs compress=zstd,subvol=/@home, defaults 0 1
+UUID=$id_boot /boot ext4 defaults 0 1
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
