@@ -70,5 +70,7 @@ echo Installing GRUB
 chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
 chroot /mnt grub-install /dev/$diskname
 
+chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
  
 
