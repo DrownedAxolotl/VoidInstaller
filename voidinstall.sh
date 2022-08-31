@@ -21,14 +21,16 @@ mkswap /dev/$swappartition
 
 swapon /dev/$swappartition
 
-mount -o compress=zstd /dev/$rootpartition /mnt
+btrfs_args="noatime,compress=zstd"
+
+mount -o $btrfs_args /dev/$rootpartition /mnt
 btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
 
-mount -t btrfs -o compress=zstd,subvol=@ /mnt
+mount -t btrfs -o $btrfs_args,subvol=@ /mnt
 mkdir /mnt/home
-mount -t btrfs -o compress=zstd,subvol=@home /mnt/home
+mount -t btrfs -o $btrfs_args,subvol=@home /mnt/home
 mkdir /mnt/boot
 mount /dev/$bootpartition /mnt/boot
 
@@ -60,9 +62,9 @@ id_swap=$(blkid -s UUID -o value /dev/$swappartition)
 id_boot=$(blkid -s UUID -o value /dev/$bootpartition)
 cat << STAB > /mnt/etc/fstab
 UUID=$id_swap none swap sw 0 0
-UUID=$id_root / btrfs compress=zstd,subvol=/@, defaults 0 1
-UUID=$id_root /home btrfs compress=zstd,subvol=/@home, defaults 0 1
-UUID=$id_boot /boot ext4 defaults 0 1
+UUID=$id_root / btrfs $btrfs_args,subvol=/@, defaults 0 1
+UUID=$id_root /home btrfs $btrfs_args,subvol=/@home, defaults 0 1
+UUID=$id_boot /boot ext4 defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
