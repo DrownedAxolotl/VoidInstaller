@@ -26,9 +26,9 @@ btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
 
-mount -o compress=zstd,subvol=@ /mnt
+mount -t btrfs -o compress=zstd,subvol=@ /mnt
 mkdir /mnt/home
-mount -o compress=zstd,subvol=@home /mnt/home
+mount -t btrfs -o compress=zstd,subvol=@home /mnt/home
 mkdir /mnt/boot
 mount /dev/$bootpartition /mnt/boot
 
