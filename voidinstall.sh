@@ -68,12 +68,11 @@ STAB
 
 
 echo Installing GRUB
-read
-ls /mnt/grub
-chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
-chroot /mnt grub-install /dev/$diskname
-
-chroot /mnt update-grub
+cat << EOF | chroot /mnt
+xbps-install -Sy grub
+grub-install /dev/$diskname
+update-grub
+EOF
 
  
 
