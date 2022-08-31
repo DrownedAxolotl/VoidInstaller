@@ -11,29 +11,34 @@ fdisk /dev/$disk
 lsblk
 echo Enter the name of the root partition
 read root
-echo Enter the name of the boot partition
-read boot
+#echo Enter the name of the boot partition
+#read boot
 echo Enter the name of the swap
 read swap
 
 echo Enter your hostname
 read hostname
 
-mkfs.ext4 /dev/$boot
-mkfs.btrfs /dev/$root
+#mkfs.ext4 /dev/$boot
+mkfs.ext4 /dev/$root
 mkswap /dev/$swap
 swapon /dev/$swap
 
+:'
 mount -o compress=zstd /dev/$root /mnt
 btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
+'
 
+:'
 mount -o compress=zstd,suvol=@ /dev/$root /mnt
 mkdir /mnt/boot
 mount /dev/$boot /mnt/boot
 mkdir /mnt/home
 mount -o compress=zstd,suvol=@home /dev/$root /mnt/home
+'
+mount /dev/$root /mnt
 
 REPO=https://repo-fi.voidlinux.org/current
 ARCH=x86_64
