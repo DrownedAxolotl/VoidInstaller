@@ -68,11 +68,11 @@ UUID=$id_boot /boot ext4 defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
-echo Installing GRUB
-chroot /mnt/system xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
-chroot /mnt/system grub-install /dev/$diskname
+#echo Installing GRUB
+#chroot /mnt/system xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
+#chroot /mnt/system grub-install /dev/$diskname
 
-chroot /mnt/system update-grub
+#chroot /mnt/system update-grub
 
  
 
