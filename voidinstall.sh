@@ -66,12 +66,12 @@ UUID=$id_boot /boot ext4 defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0  
 STAB
 
+
 echo Installing GRUB
-ls /mnt/grub
 read
+ls /mnt/grub
 chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
 chroot /mnt grub-install /dev/$diskname
-read
 
 chroot /mnt update-grub
 
