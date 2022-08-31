@@ -39,10 +39,7 @@ ARCH=x86_64
 
 XBPS_ARCH=$ARCH xbps-install -S -r /mnt -R "$REPO" base-system btrfs-progs
 
-mount --rbind /dev /mnt/dev; mount --make-rslave /mnt/dev
-mount --rbind /proc /mnt/proc; mount --make-rslave /mnt/proc
-mount --rbind /sys /mnt/sys; mount --make-rslave /mnt/sys
-mount --rbind /run /mnt/run; mount --make-rslave /mnt/run
+for t in sys dev proc; do mount --rbind /$t /mnt/$t; done
 cp /etc/resolv.conf /mnt/etc
 
 
@@ -72,7 +69,7 @@ echo Installing GRUB
 chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
 chroot /mnt grub-install /dev/$diskname
 
-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+chroot /mnt update-grub
 
  
 
