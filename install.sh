@@ -42,21 +42,8 @@ XBPS_ARCH=$ARCH xbps-install -Sy -R "$REPO" -r /mnt base-system btrfs-progs
 for t in sys dev proc; do mount -o bind /$t /mnt/$t; done
 cp /etc/resolv.conf /mnt/etc
 
-id_root=$(blkid -s UUID -o value /dev/$root)
-cat << EOF > /mnt/etc/fstab
-UUID=$(blkid -s UUID -o value /dev/$swap) none swap sw 0 0
-UUID=$id_root / btrfs compress=zstd,subvol=/@, defaults 0 1
-UUID=$id_root /home btrfs compress=zstd,subvol=/@home, defaults 0 2
-UUID=$(blkid -s UUID -o value /dev/$boot) /boot ext4 defaults 0 2
-tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0 
-EOF
+echo Entering the chroot environment...
+cp chroot.sh /mnt/chroot.sh
+chroot /mnt bash chroot.sh
 
-echo $hostname > /mnt/etc/hostname
-echo Set a root password
-chroot /mnt passwd
-
-#GRUB setup
-chroot /mnt xbps-install -Sy grub
-chroot /mnt grub-install /dev/$disk
-chroot /mnt update-grub
-chroot /mnt xbps-reconfigure -fa
+rm /mnt/chroot.sh
