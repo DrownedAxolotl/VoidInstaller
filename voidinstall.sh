@@ -15,40 +15,43 @@ read bootpartition
 echo Enter your swap name
 read swappartition
 
-mkfs.btrfs -L root /dev/$rootpartition
-mkfs.ext4 -L boot /dev/$bootpartition
+mkfs.btrfs /dev/$rootpartition
+mkfs.ext4 /dev/$bootpartition
 mkswap /dev/$swappartition
 
 swapon /dev/$swappartition
 
 btrfs_args="noatime,compress=zstd"
 
-mount -o $btrfs_args /dev/$rootpartition /mnt
-btrfs sub create /mnt/@
-btrfs sub create /mnt/@home
-umount /mnt
+echo Creating subvolumes
+mkdir /mnt/root
+mount -o $btrfs_args /dev/$rootpartition /mnt/root
+btrfs sub create /mnt/root/@
+btrfs sub create /mnt/root/@home
+umount /mnt/root
 
-mount -t btrfs -o $btrfs_args,subvol=@ /mnt
-mkdir /mnt/home
-mount -t btrfs -o $btrfs_args,subvol=@home /mnt/home
-mkdir /mnt/boot
-mount /dev/$bootpartition /mnt/boot
+mkdir /mnt/system
+mount -o $btrfs_args,subvol=@ /mnt/system
+mkdir /mnt/system/home
+mount -o $btrfs_args,subvol=@home /mnt/system/home
+mkdir /mnt/system/boot
+mount /dev/$bootpartition /mnt/system/boot
 
 REPO=https://repo-fi.voidlinux.org/current
 ARCH=x86_64
 
-XBPS_ARCH=$ARCH xbps-install -S -r /mnt -R "$REPO" base-system btrfs-progs
+XBPS_ARCH=$ARCH xbps-install -S -r /mnt/system -R "$REPO" base-system btrfs-progs
 
-for t in sys dev proc; do mount --rbind /$t /mnt/$t; done
-cp /etc/resolv.conf /mnt/etc
+for t in sys dev proc; do mount --rbind /$t /mnt/system/$t; done
+cp /etc/resolv.conf /mnt/system/etc
 
 
 echo Please choose your hostname
-read hostname && echo $hostname > /mnt/etc/hostname
+read hostname && echo $hostname > /mnt/system/etc/hostname
 
 echo Entering chroot...
 echo Set root password
-chroot /mnt passwd
+chroot /mnt/system passwd
 
 echo Choose your username
 read username
@@ -66,10 +69,10 @@ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
 STAB
 
 echo Installing GRUB
-chroot /mnt xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
-chroot /mnt grub-install /dev/$diskname
+chroot /mnt/system xbps-install -S grub || echo GRUB installation failed! Clearing space on the install media may fix the issue.
+chroot /mnt/system grub-install /dev/$diskname
 
-chroot /mnt update-grub
+chroot /mnt/system update-grub
 
  
 
