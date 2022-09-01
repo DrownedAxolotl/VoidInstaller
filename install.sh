@@ -2,8 +2,8 @@ echo ##########################
 echo Welcome to the Void Linux installer
 echo ##########################
 
-echo Select an installation drive
 lsblk
+echo Select an installation drive
 read disk
 wipefs -a /dev/$disk
 fdisk /dev/$disk
@@ -24,16 +24,20 @@ mkfs.btrfs /dev/$root
 mkswap /dev/$swap
 swapon /dev/$swap
 
+
 mount -o compress=zstd /dev/$root /mnt
 btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
+
+
 
 mount -o compress=zstd,suvol=@ /dev/$root /mnt
 mkdir /mnt/boot
 mount /dev/$boot /mnt/boot
 mkdir /mnt/home
 mount -o compress=zstd,suvol=@home /dev/$root /mnt/home
+
 
 REPO=https://repo-fi.voidlinux.org/current
 ARCH=x86_64
