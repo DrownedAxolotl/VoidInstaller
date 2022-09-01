@@ -19,7 +19,7 @@ read swap
 echo Enter your hostname
 read hostname
 
-mkfs.ext4 /dev/$boot
+mkfs.vfat /dev/$boot
 mkfs.btrfs /dev/$root
 mkswap /dev/$swap
 swapon /dev/$swap
