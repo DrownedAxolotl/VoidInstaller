@@ -39,8 +39,7 @@ mount -o compress=zstd,subvol=@home /dev/$root /mnt/home
 
 
 REPO=https://repo-fi.voidlinux.org/current
-ARCH=x86_64
-XBPS_ARCH=$ARCH xbps-install -Sy -R "$REPO" -r /mnt base-system btrfs-progs
+XBPS_ARCH=x86_64 xbps-install -Sy -R "$REPO" -r /mnt base-system btrfs-progs
 
 for t in sys dev proc; do mount -o bind /$t /mnt/$t; done
 cp /etc/resolv.conf /mnt/etc
@@ -54,6 +53,13 @@ UUID=$id_root / btrfs subvol=@, defaults 0 1
 UUID=$id_root /home btrfs subvol=@home, defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0 
 EOF
+
+echo Configuring rc.conf...
+echo KEYMAP=sr-latin > /mnt/etc/rc.conf
+
+echo Configuring locales...
+echo "en_US.UTF-8 UTF-8" >> /mnt/etc/default/libc-locales
+chroot /mnt xbps-reconfigure -f glibc-locales
 
 
 echo $hostname > /mnt/etc/hostname
