@@ -1,3 +1,4 @@
+#!/bin/bash
 echo ##########################
 echo Welcome to the Void Linux installer
 echo ##########################
@@ -25,16 +26,16 @@ mkswap /dev/$swap
 swapon /dev/$swap
 
 
-mount -o /dev/$root /mnt
+mount /dev/$root /mnt
 btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
 
-mount -o subvol=@ /dev/$root /mnt
+mount -o compress=zstd,subvol=@ /dev/$root /mnt
 mkdir /mnt/boot
 mount /dev/$boot /mnt/boot
 mkdir /mnt/home
-mount -o subvol=@home /dev/$root /mnt/home
+mount -o compress=zstd,subvol=@home /dev/$root /mnt/home
 
 
 REPO=https://repo-fi.voidlinux.org/current
