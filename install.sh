@@ -1,7 +1,7 @@
 #!/bin/bash
-echo ##########################
+echo "###############################"
 echo Welcome to the Void Linux installer
-echo ##########################
+echo "###############################"
 
 lsblk
 echo Select an installation drive
@@ -56,9 +56,9 @@ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
 EOF
 
 
-echo $hostname > /etc/hostname
+echo $hostname > /mnt/etc/hostname
 echo Set a root password
-passwd
+chroot /mnt passwd
 
 #GRUB setup
 chroot /mnt xbps-install -Sy grub
