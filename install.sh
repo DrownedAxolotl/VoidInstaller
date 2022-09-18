@@ -26,7 +26,7 @@ mkswap /dev/$swap
 swapon /dev/$swap
 
 
-mount /dev/$root /mnt
+mount -o compress=zstd /dev/$root /mnt
 btrfs sub create /mnt/@
 btrfs sub create /mnt/@home
 umount /mnt
