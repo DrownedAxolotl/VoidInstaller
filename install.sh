@@ -72,8 +72,7 @@ echo $hostname > /mnt/etc/hostname
 echo Set a root password
 chroot /mnt passwd
 
-#GRUB setup
-chroot /mnt xbps-install -Sy grub
-chroot /mnt grub-install /dev/$disk
-chroot /mnt update-grub
+#Refind setup
+chroot /mnt xbps-install refind
+chroot /mnt refind-install --alldrivers
 chroot /mnt xbps-reconfigure -fa
