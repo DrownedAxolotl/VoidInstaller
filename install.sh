@@ -73,6 +73,10 @@ echo Set a root password
 chroot /mnt passwd
 
 #Refind setup
-chroot /mnt xbps-install refind
-chroot /mnt refind-install --alldrivers
+chroot /mnt xbps-install -S refind
+chroot /mnt refind-install --usedefault /dev/$efi --alldrivers
+chroot /mnt mkrlconf
+cat << EOF > /mnt/boot/refind_linux.conf
+"Boot with standard options" "root=/dev/$root ro rootflags=subvol=@ init=/sbin/init rd.luks=0 rd.md=0 rd.dm=0 loglevel=4 gpt add_efi_memmap vconsole.unicode=1 vconsole.keymap=us locale.LANG=en_US.UTF-8 rd.live.overlay.overlayfs=1"
+EOF
 chroot /mnt xbps-reconfigure -fa
