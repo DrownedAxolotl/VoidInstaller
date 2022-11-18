@@ -54,8 +54,11 @@ UUID=$id_root /home btrfs compress=zstd,subvol=@home, defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0 
 EOF
 
-echo Configuring rc.conf...
-echo KEYMAP=sr-latin > /mnt/etc/rc.conf
+
+echo Do you wish to use the serbian keyboard? [Y/n]
+read sr_keys
+[ $sr_keys = n ] || echo KEYMAP=sr-latin > /mnt/etc/rc.conf
+
 
 echo Configuring locales...
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/default/libc-locales
