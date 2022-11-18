@@ -64,7 +64,7 @@ echo Configuring rc.conf...
 echo Do you want to use the Serbian latin keyboard? [Y/n]
 read sr_keys
 
-[ sr_keys=n ] || echo KEYMAP=sr-latin > /mnt/etc/rc.conf 
+[ $sr_keys = n ] || echo KEYMAP=sr-latin > /mnt/etc/rc.conf 
 
 
 echo Configuring locales...
