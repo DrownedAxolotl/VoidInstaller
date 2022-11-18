@@ -61,7 +61,11 @@ tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0
 EOF
 
 echo Configuring rc.conf...
-echo KEYMAP=sr-latin > /mnt/etc/rc.conf
+echo Do you want to use the Serbian latin keyboard? [Y/n]
+read sr_keys
+
+[ sr_keys=n ] || echo KEYMAP=sr-latin > /mnt/etc/rc.conf 
+
 
 echo Configuring locales...
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/default/libc-locales
