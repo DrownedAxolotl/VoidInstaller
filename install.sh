@@ -38,8 +38,9 @@ mkdir /mnt/home
 mount -o compress=zstd,subvol=@home /dev/$root /mnt/home
 
 
-REPO=https://repo-fi.voidlinux.org/current
-XBPS_ARCH=x86_64 xbps-install -Sy -R "$REPO" -r /mnt base-system btrfs-progs
+#Fetch archive
+curl https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20221001.tar.xz > voidlinux.tar.xz
+tar -xvf voidlinux.tar.xz -C /mnt
 
 for t in sys dev proc; do mount -o bind /$t /mnt/$t; done
 cp /etc/resolv.conf /mnt/etc
@@ -58,6 +59,13 @@ EOF
 echo Do you wish to use the serbian keyboard? [Y/n]
 read sr_keys
 [ $sr_keys = n ] || echo KEYMAP=sr-latin > /mnt/etc/rc.conf
+
+
+chroot /mnt xbps-install -Su xbps
+chroot /mnt xbps-install -Su
+chroot /mnt xbps-install base-system
+chroot /mnt xbps-remove -R base-voidstrap
+
 
 
 echo Configuring locales...
