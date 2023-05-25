@@ -43,8 +43,8 @@ mkdir /mnt/home
 mount -o compress=zstd,subvol=@home /dev/$root /mnt/home
 
 
-REPO=https://repo-fi.voidlinux.org/current
-XBPS_ARCH=x86_64 xbps-install -Sy -R "$REPO" -r /mnt base-system btrfs-progs
+curl https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20221001.tar.xz > voidlinux.tar.xz
+tar -xvf voidlinux.tar.xz -C /mnt
 
 for t in sys dev proc; do mount -o bind /$t /mnt/$t; done
 cp /etc/resolv.conf /mnt/etc
@@ -59,6 +59,13 @@ UUID=$id_root / btrfs compress=zstd,subvol=@, defaults 0 1
 UUID=$id_root /home btrfs compress=zstd,subvol=@home, defaults 0 2
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0 
 EOF
+
+
+chroot /mnt xbps-install -Su xbps
+chroot /mnt xbps-install -u
+chroot /mnt xbps-install base-system btrfs-progs
+chroot /mnt xbps-remove -R base-voidstrap
+
 
 echo Configuring rc.conf...
 echo Do you want to use the Serbian latin keyboard? [Y/n]
@@ -77,7 +84,7 @@ echo Set a root password
 chroot /mnt passwd
 
 #Refind setup
-chroot /mnt xbps-install -S refind
+chroot /mnt xbps-install refind
 chroot /mnt refind-install --usedefault /dev/$efi --alldrivers
 chroot /mnt mkrlconf
 cat << EOF > /mnt/boot/refind_linux.conf
