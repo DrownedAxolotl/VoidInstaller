@@ -10,19 +10,16 @@ wipefs -a /dev/$disk
 fdisk /dev/$disk
 
 lsblk
-echo Enter the name of the root partition
-read root
-echo Enter the name of the boot partition
-read boot
 echo Enter the name of the EFI System partition
 read efi
+echo Enter the name of the root partition
+read root
 echo Enter the name of the swap
 read swap
 
 echo Enter your hostname
 read hostname
 
-mkfs.ext4 -L boot /dev/$boot
 mkfs.btrfs -L void /dev/$root
 mkfs.vfat /dev/$efi
 mkswap /dev/$swap
@@ -36,7 +33,6 @@ umount /mnt
 
 mount -o compress=zstd,subvol=@ /dev/$root /mnt
 mkdir /mnt/boot
-mount /dev/$boot /mnt/boot
 mkdir /mnt/boot/efi
 mount /dev/$efi /mnt/boot/efi
 mkdir /mnt/home
@@ -53,7 +49,6 @@ cp /etc/resolv.conf /mnt/etc
 id_root=$(blkid -s UUID -o value /dev/$root)
 cat << EOF > /mnt/etc/fstab
 UUID=$(blkid -s UUID -o value /dev/$swap) none swap sw 0 0
-UUID=$(blkid -s UUID -o value /dev/$boot) /boot ext4 defaults 0 2
 UUID=$(blkid -s UUID -o value /dev/$efi) /boot/efi vfat  defaults 0 2
 UUID=$id_root / btrfs compress=zstd,subvol=@, defaults 0 1
 UUID=$id_root /home btrfs compress=zstd,subvol=@home, defaults 0 2
