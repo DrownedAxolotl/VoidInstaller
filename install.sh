@@ -10,10 +10,10 @@ wipefs -a /dev/$disk
 fdisk /dev/$disk
 
 lsblk
-echo Enter the name of the EFI System partition
-read efi
 echo Enter the name of the root partition
 read root
+echo Enter the name of the EFI System partition
+read efi
 echo Enter the name of the swap
 read swap
 
@@ -48,10 +48,11 @@ cp /etc/resolv.conf /mnt/etc
 
 id_root=$(blkid -s UUID -o value /dev/$root)
 cat << EOF > /mnt/etc/fstab
+UUID=d8776353-d27f-4673-978b-e94d6e58af3
 UUID=$(blkid -s UUID -o value /dev/$swap) none swap sw 0 0
 UUID=$(blkid -s UUID -o value /dev/$efi) /boot/efi vfat  defaults 0 2
-UUID=$id_root / btrfs compress=zstd,subvol=@, defaults 0 1
-UUID=$id_root /home btrfs compress=zstd,subvol=@home, defaults 0 2
+UUID=$id_root	/         	btrfs     	rw,relatime,compress=zstd:3,ssd,space_cache=v2,subvolid=256,subvol=/@	0 0
+UUID=$id_root	/home     	btrfs     	rw,relatime,compress=zstd:3,ssd,space_cache=v2,subvolid=257,subvol=/@home	0 1
 tmpfs /tmp tmpfs defaults,nosuid,nodev 0 0 
 EOF
 
