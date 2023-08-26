@@ -39,7 +39,7 @@ mkdir /mnt/home
 mount -o compress=zstd,subvol=@home /dev/$root /mnt/home
 
 
-curl https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20221001.tar.xz > voidlinux.tar.xz
+curl https://repo-default.voidlinux.org/live/current/void-x86_64-ROOTFS-20230628.tar.xz > voidlinux.tar.xz
 tar -xvf voidlinux.tar.xz -C /mnt
 
 for t in sys dev proc; do mount -o bind /$t /mnt/$t; done
